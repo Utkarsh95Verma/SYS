@@ -7,12 +7,15 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// MySQL connection
-const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",        // your MySQL username
-  password: "0123456",        // your MySQL password
-  database: "studentdb"
+// ✅ PostgreSQL connection
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL, // Render gives this automatically
+  ssl: { rejectUnauthorized: false } // Required for Render Postgres
+});
+
+// ✅ Default route
+app.get("/", (req, res) => {
+  res.send("Backend running with Render PostgreSQL 🚀");
 });
 
 db.connect(err => {
@@ -64,8 +67,4 @@ app.delete("/students/:id", (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
-
-app.get("/", (req, res) => {
-  res.send("Backend running successfully 🚀");
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
